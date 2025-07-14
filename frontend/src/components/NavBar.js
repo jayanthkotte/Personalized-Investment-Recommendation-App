@@ -35,8 +35,8 @@ function NavBar() {
       transition={{ duration: 0.7, type: "spring" }}
     >
       <AppBar position="sticky" color="default" elevation={4} sx={{ background: 'linear-gradient(90deg, #0f2027 0%, #2c5364 100%)' }}>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mr: 6 }}>
             <IconButton edge="start" color="primary" sx={{ background: 'white', mr: 1 }}>
               <Typography variant="h6" color="primary" fontWeight={700}>₹</Typography>
             </IconButton>
@@ -57,7 +57,7 @@ function NavBar() {
                   borderRadius: 2,
                   fontWeight: location.pathname === item.path ? 700 : 500,
                   background: location.pathname === item.path ? 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)' : 'none',
-                  color: location.pathname === item.path ? 'white' : 'inherit',
+                  color: 'white', // Always white text
                   boxShadow: location.pathname === item.path ? 3 : 0,
                   transition: 'all 0.2s',
                   mx: 0.5
@@ -71,7 +71,7 @@ function NavBar() {
               startIcon={<LogoutIcon />}
               color="secondary"
               variant="outlined"
-              sx={{ borderRadius: 2, fontWeight: 700, ml: 2 }}
+              sx={{ borderRadius: 2, fontWeight: 700, ml: 2, color: 'white', borderColor: 'white' }}
             >
               Sign Out
             </Button>

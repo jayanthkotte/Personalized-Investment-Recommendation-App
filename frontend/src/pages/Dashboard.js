@@ -93,7 +93,7 @@ function Dashboard() {
       value: formatCurrency(invested),
       icon: <AccountBalanceWalletIcon fontSize="large" color="secondary" />, 
       change: `${investments.length} investments`,
-      changeColor: "text.secondary"
+      changeColor: "white"
     },
     {
       title: "Total Returns",
@@ -107,7 +107,7 @@ function Dashboard() {
       value: formatCurrency(profile.virtual_balance),
       icon: <SavingsIcon fontSize="large" color="info" />, 
       change: `Ready to invest`,
-      changeColor: "text.secondary"
+      changeColor: "white"
     }
   ];
 

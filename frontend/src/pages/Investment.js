@@ -239,7 +239,8 @@ function Investment() {
                   type="text"
                   label="Expected Return %"
                   value={expectedReturn}
-                  onChange={e => setExpectedReturn(e.target.value)}
+                  InputProps={{ readOnly: true }}
+                  onChange={() => {}} // Prevent editing
                   variant="filled"
                   sx={{ minWidth: 160, bgcolor: 'rgba(255,255,255,0.05)', input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }}
                   InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
