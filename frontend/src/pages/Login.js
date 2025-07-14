@@ -1,180 +1,9 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
-
-const Container = styled.div`
-  background: ${({ theme }) => theme.background};
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing.lg};
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: ${({ theme }) => theme.gradientPrimary};
-    opacity: 0.05;
-    z-index: 0;
-  }
-`;
-
-const LoginCard = styled.div`
-  background: ${({ theme }) => theme.card};
-  border-radius: ${({ theme }) => theme.radiusXl};
-  padding: ${({ theme }) => theme.spacing.xxl};
-  box-shadow: ${({ theme }) => theme.shadowXl};
-  width: 100%;
-  max-width: 400px;
-  position: relative;
-  z-index: 1;
-  border: 1px solid ${({ theme }) => theme.cardBorder};
-`;
-
-const Logo = styled.div`
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-  
-  .logo-icon {
-    width: 60px;
-    height: 60px;
-    background: ${({ theme }) => theme.gradientPrimary};
-    border-radius: ${({ theme }) => theme.radiusLg};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto ${({ theme }) => theme.spacing.md};
-    color: white;
-    font-weight: bold;
-    font-size: 24px;
-  }
-  
-  .logo-text {
-    font-size: 28px;
-    font-weight: 700;
-    color: ${({ theme }) => theme.textPrimary};
-    margin-bottom: ${({ theme }) => theme.spacing.xs};
-  }
-  
-  .logo-subtitle {
-    color: ${({ theme }) => theme.textSecondary};
-    font-size: 14px;
-  }
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.md};
-`;
-
-const InputGroup = styled.div`
-  position: relative;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: ${({ theme }) => theme.spacing.md};
-  border: 2px solid ${({ theme }) => theme.cardBorder};
-  border-radius: ${({ theme }) => theme.radiusMd};
-  background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.textPrimary};
-  font-size: 16px;
-  transition: all 0.2s ease;
-  
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.primary};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.primary}20;
-  }
-  
-  &::placeholder {
-    color: ${({ theme }) => theme.textTertiary};
-  }
-`;
-
-const Button = styled.button`
-  background: ${({ theme }) => theme.gradientPrimary};
-  color: white;
-  border: none;
-  padding: ${({ theme }) => theme.spacing.md};
-  border-radius: ${({ theme }) => theme.radiusMd};
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: ${({ theme }) => theme.spacing.md};
-  
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: ${({ theme }) => theme.shadowLg};
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-`;
-
-const Error = styled.div`
-  background: ${({ theme }) => theme.dangerLight};
-  color: ${({ theme }) => theme.danger};
-  padding: ${({ theme }) => theme.spacing.md};
-  border-radius: ${({ theme }) => theme.radiusMd};
-  font-size: 14px;
-  border: 1px solid ${({ theme }) => theme.danger}30;
-`;
-
-const LinkText = styled.div`
-  text-align: center;
-  margin-top: ${({ theme }) => theme.spacing.lg};
-  color: ${({ theme }) => theme.textSecondary};
-  font-size: 14px;
-  
-  a {
-    color: ${({ theme }) => theme.primary};
-    text-decoration: none;
-    font-weight: 600;
-    
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
-
-const Divider = styled.div`
-  display: flex;
-  align-items: center;
-  margin: ${({ theme }) => theme.spacing.lg} 0;
-  
-  &::before,
-  &::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: ${({ theme }) => theme.cardBorder};
-  }
-  
-  span {
-    padding: 0 ${({ theme }) => theme.spacing.md};
-    color: ${({ theme }) => theme.textTertiary};
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-`;
+import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { Box, Card, TextField, Button, Typography, Alert, CircularProgress, Link, Divider } from "@mui/material";
+import { motion } from "framer-motion";
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -187,69 +16,89 @@ function Login() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    
     try {
       const res = await axios.post("/api/login", { email, password });
       localStorage.setItem("token", res.data.token);
-      
       if (res.data.risk_profile_completed) {
         navigate("/dashboard");
       } else {
         navigate("/risk-profile");
       }
     } catch (err) {
-      setError(err.response?.data?.error || "Login failed. Please check your credentials.");
+      setError(err.response?.data?.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container>
-      <LoginCard>
-        <Logo>
-          <div className="logo-icon">₹</div>
-          <div className="logo-text">InvestSmart</div>
-          <div className="logo-subtitle">Your Personal Investment Advisor</div>
-        </Logo>
-        
-        {error && <Error>{error}</Error>}
-        
-        <Form onSubmit={handleSubmit}>
-          <InputGroup>
-            <Input
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, type: "spring" }}
+        style={{ width: '100%', maxWidth: 400 }}
+      >
+        <Card elevation={8} sx={{ borderRadius: 4, p: 4, position: 'relative', overflow: 'visible', background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
+          <Box sx={{ textAlign: 'center', mb: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
+              <LockOutlinedIcon sx={{ fontSize: 48, color: 'primary.main', bgcolor: 'white', borderRadius: '50%', p: 1, boxShadow: 3 }} />
+            </Box>
+            <Typography variant="h4" fontWeight={700} sx={{ background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
+              Sign In
+            </Typography>
+            <Typography variant="subtitle2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+              Welcome back! Please login to your account.
+            </Typography>
+          </Box>
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextField
+              label="Email"
               type="email"
-              placeholder="Enter your email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
+              fullWidth
+              variant="filled"
+              sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
+              InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
             />
-          </InputGroup>
-          
-          <InputGroup>
-            <Input
+            <TextField
+              label="Password"
               type="password"
-              placeholder="Enter your password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
+              fullWidth
+              variant="filled"
+              sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
+              InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
             />
-          </InputGroup>
-          
-          <Button type="submit" disabled={loading}>
-            {loading ? "Signing In..." : "Sign In"}
-          </Button>
-        </Form>
-        
-        <Divider>
-          <span>or</span>
-        </Divider>
-        
-        <LinkText>
-          Don't have an account? <Link to="/register">Create Account</Link>
-        </LinkText>
-      </LoginCard>
-    </Container>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+              sx={{ mt: 2, borderRadius: 2, fontWeight: 700, boxShadow: 3 }}
+              disabled={loading}
+              fullWidth
+            >
+              {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+            </Button>
+          </Box>
+          <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.1)' }}>
+            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)' }}>OR</Typography>
+          </Divider>
+          <Typography align="center" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+            New user?{' '}
+            <Link component={RouterLink} to="/register" color="secondary" fontWeight={700} underline="hover">
+              Register here
+            </Link>
+          </Typography>
+        </Card>
+      </motion.div>
+    </Box>
   );
 }
 

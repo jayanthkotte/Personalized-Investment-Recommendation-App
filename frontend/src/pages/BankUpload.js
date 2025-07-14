@@ -1,89 +1,23 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import axios from "axios";
 import NavBar from "../components/NavBar";
-
-const Container = styled.div`
-  background: ${({ theme }) => theme.background};
-  color: black;
-  min-height: 100vh;
-  padding: 32px;
-`;
-const Card = styled.div`
-  background: ${({ theme }) => theme.card};
-  padding: 24px;
-  border-radius: 8px;
-  margin-bottom: 24px;
-`;
-const Table = styled.table`
-  width: 100%;
-  background: ${({ theme }) => theme.card};
-  color: ${({ theme }) => theme.textPrimary};
-  border-radius: ${({ theme }) => theme.radiusMd};
-  border-collapse: collapse;
-`;
-const Th = styled.th`
-  border-bottom: 1px solid ${({ theme }) => theme.cardBorder};
-  padding: 12px;
-  text-align: center;
-  color: ${({ theme }) => theme.textSecondary};
-  background: ${({ theme }) => theme.backgroundTertiary};
-`;
-const Td = styled.td`
-  padding: 12px;
-  border-bottom: 1px solid ${({ theme }) => theme.cardBorder};
-  text-align: center;
-  color: ${({ theme }) => theme.textPrimary};
-`;
-const StyledFileInput = styled.input`
-  display: none;
-`;
-
-const FileLabel = styled.label`
-  display: inline-block;
-  background: ${({ theme }) => theme.gradientPrimary};
-  color: #fff;
-  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
-  border-radius: ${({ theme }) => theme.radiusMd};
-  font-weight: 600;
-  cursor: pointer;
-  margin-right: ${({ theme }) => theme.spacing.md};
-  transition: all 0.2s;
-  &:hover {
-    box-shadow: ${({ theme }) => theme.shadowMd};
-    transform: translateY(-1px);
-  }
-`;
-
-const Button = styled.button`
-  background: ${({ theme }) => theme.gradientPrimary};
-  color: #fff;
-  border: none;
-  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
-  border-radius: ${({ theme }) => theme.radiusMd};
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
-  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
-  &:hover {
-    box-shadow: ${({ theme }) => theme.shadowMd};
-    transform: translateY(-1px);
-  }
-`;
+import { Box, Card, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Alert, CircularProgress } from "@mui/material";
+import { motion } from "framer-motion";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 function BankUpload() {
   const [file, setFile] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [behavior, setBehavior] = useState(null);
   const [msg, setMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const fetchTransactions = async () => {
     try {
       const txRes = await axios.get("/api/transactions", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
-      setTransactions(txRes.data.transactions || txRes.data); // support both array and {transactions, behavior}
+      setTransactions(txRes.data.transactions || txRes.data);
       setBehavior(txRes.data.behavior || null);
     } catch {
       setMsg("Failed to fetch transactions");
@@ -100,6 +34,7 @@ function BankUpload() {
 
   const handleUpload = async () => {
     if (!file) return;
+    setLoading(true);
     const formData = new FormData();
     formData.append("file", file);
     try {
@@ -114,47 +49,90 @@ function BankUpload() {
       fetchTransactions();
     } catch (err) {
       setMsg("Upload failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
       <NavBar />
-      <Container>
-        <Card>
-          <h2>Bank Data Upload / Sync</h2>
-          <FileLabel htmlFor="file-upload">Choose File</FileLabel>
-          <StyledFileInput id="file-upload" type="file" accept=".csv" onChange={handleFile} />
-          <Button onClick={handleUpload} disabled={!file}>Upload</Button>
-          {msg && <div style={{ color: "#e53935", marginTop: 8 }}>{msg}</div>}
-          {behavior && <div>User Financial Behavior: <b>{behavior}</b></div>}
-        </Card>
-        {transactions.length > 0 && (
-          <Card>
-            <h3>Transactions</h3>
-            <Table>
-              <thead>
-                <tr>
-                  <Th>Date</Th>
-                  <Th>Amount</Th>
-                  <Th>Description</Th>
-                  <Th>Type</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map(tx => (
-                  <tr key={tx._id}>
-                    <Td>{tx.date}</Td>
-                    <Td>{tx.amount}</Td>
-                    <Td>{tx.description}</Td>
-                    <Td>{tx.type}</Td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </Card>
-        )}
-      </Container>
+      <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
+        <Box sx={{ maxWidth: 900, mx: 'auto', px: 2 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, type: "spring" }}
+          >
+            <Card elevation={8} sx={{ borderRadius: 4, p: 4, mb: 4, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
+              <Typography variant="h4" fontWeight={700} sx={{ mb: 2, background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                Bank Data Upload / Sync
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                <Button
+                  variant="contained"
+                  component="label"
+                  startIcon={<CloudUploadIcon />}
+                  color="primary"
+                  sx={{ borderRadius: 2, fontWeight: 700, boxShadow: 3 }}
+                >
+                  Choose File
+                  <input type="file" accept=".csv" hidden onChange={handleFile} />
+                </Button>
+                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                  {file ? file.name : 'No file selected'}
+                </Typography>
+                <Button
+                  onClick={handleUpload}
+                  disabled={!file || loading}
+                  variant="contained"
+                  color="secondary"
+                  sx={{ borderRadius: 2, fontWeight: 700, ml: 2 }}
+                >
+                  {loading ? <CircularProgress size={22} color="inherit" /> : 'Upload'}
+                </Button>
+              </Box>
+              {msg && <Alert severity={msg.includes('fail') ? 'error' : 'success'} sx={{ mb: 2 }}>{msg}</Alert>}
+              {behavior && <Alert severity="info" sx={{ mb: 2 }}>User Financial Behavior: <b>{behavior}</b></Alert>}
+            </Card>
+          </motion.div>
+          {transactions.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, type: "spring" }}
+            >
+              <Card elevation={6} sx={{ borderRadius: 3, p: 3, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
+                <Typography variant="h5" fontWeight={700} sx={{ mb: 2, color: 'white' }}>
+                  Transactions
+                </Typography>
+                <TableContainer component={Paper} sx={{ background: 'rgba(255,255,255,0.03)', borderRadius: 3 }}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Date</TableCell>
+                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Amount</TableCell>
+                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Description</TableCell>
+                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Type</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {transactions.map(tx => (
+                        <TableRow key={tx._id} hover>
+                          <TableCell sx={{ color: 'white' }}>{tx.date}</TableCell>
+                          <TableCell sx={{ color: 'white' }}>{tx.amount}</TableCell>
+                          <TableCell sx={{ color: 'white' }}>{tx.description}</TableCell>
+                          <TableCell sx={{ color: 'white' }}>{tx.type}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Card>
+            </motion.div>
+          )}
+        </Box>
+      </Box>
     </>
   );
 }

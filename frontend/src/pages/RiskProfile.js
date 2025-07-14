@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import { Box, Card, Typography, Button, Radio, RadioGroup, FormControl, FormControlLabel, Select, MenuItem, Alert, InputLabel, FormHelperText } from "@mui/material";
+import { motion } from "framer-motion";
 
 const questions = [
   { q: "How would you describe your investment knowledge?", options: [
@@ -49,58 +50,6 @@ const questions = [
   ]}
 ];
 
-const Container = styled.div`
-  background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.text};
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-const Card = styled.div`
-  background: ${({ theme }) => theme.card};
-  padding: 32px;
-  border-radius: 8px;
-  margin-bottom: 24px;
-`;
-const Button = styled.button`
-  background: ${({ theme }) => theme.gradientPrimary};
-  color: #fff;
-  border: none;
-  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
-  border-radius: ${({ theme }) => theme.radiusMd};
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-top: ${({ theme }) => theme.spacing.md};
-  &:hover {
-    box-shadow: ${({ theme }) => theme.shadowMd};
-    transform: translateY(-1px);
-  }
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-`;
-const Heading = styled.h2`
-  color: #6EC1E4;
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-`;
-const Error = styled.div`
-  color: #6EC1E4;
-  margin-bottom: 10px;
-`;
-const QuestionText = styled.div`
-  color: ${({ theme }) => theme.textPrimary};
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 4px;
-`;
-
 function RiskProfile() {
   const [answers, setAnswers] = useState(Array(7).fill(null));
   const [goal, setGoal] = useState("");
@@ -141,46 +90,60 @@ function RiskProfile() {
   return (
     <>
       <NavBar />
-      <Container>
-        <Card>
-          <Heading>Risk Profiling Questionnaire</Heading>
-          {error && <Error>{error}</Error>}
-          <form onSubmit={handleSubmit}>
-            {questions.map((q, i) => (
-              <div key={i} style={{ marginBottom: 16 }}>
-                <QuestionText>{i + 1}. {q.q}</QuestionText>
-                {q.options.map((opt, j) => (
-                  <label key={j} style={{ marginRight: 16, color: '#000' }}>
-                    <input
-                      type="radio"
-                      name={`q${i}`}
-                      value={opt.score}
-                      checked={answers[i] === opt.score}
-                      onChange={() => handleChange(i, opt.score)}
-                    /> {opt.text}
-                  </label>
-                ))}
-              </div>
-            ))}
-            <div style={{ marginBottom: 16 }}>
-              <select
-                value={goal}
-                onChange={e => setGoal(e.target.value)}
-                style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc', background: '#fff', color: '#000', width: 250 }}
-                required
-              >
-                <option value="">Select Investment Goal</option>
-                <option value="Retirement">Retirement</option>
-                <option value="Education">Education</option>
-                <option value="Emergency">Emergency</option>
-                <option value="Family">Family</option>
-                <option value="Wealth Creation">Wealth Creation</option>
-              </select>
-            </div>
-            <Button type="submit">Submit</Button>
-          </form>
-        </Card>
-      </Container>
+      <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', py: 4 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, type: "spring" }}
+          style={{ width: '100%', maxWidth: 600 }}
+        >
+          <Card elevation={8} sx={{ borderRadius: 4, p: 4, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
+            <Typography variant="h4" fontWeight={700} sx={{ mb: 2, background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              Risk Profiling Questionnaire
+            </Typography>
+            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+            <Box component="form" onSubmit={handleSubmit}>
+              {questions.map((q, i) => (
+                <FormControl key={i} component="fieldset" sx={{ mb: 3, width: '100%' }} required>
+                  <Typography variant="subtitle1" fontWeight={600} sx={{ color: 'rgba(255,255,255,0.9)', mb: 1 }}>{i + 1}. {q.q}</Typography>
+                  <RadioGroup row value={answers[i] || ''} onChange={e => handleChange(i, Number(e.target.value))}>
+                    {q.options.map((opt, j) => (
+                      <FormControlLabel
+                        key={j}
+                        value={opt.score}
+                        control={<Radio sx={{ color: 'white' }} />}
+                        label={<Typography sx={{ color: 'white' }}>{opt.text}</Typography>}
+                        sx={{ mr: 3 }}
+                      />
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              ))}
+              <FormControl fullWidth required sx={{ mb: 3 }}>
+                <InputLabel id="goal-label" sx={{ color: 'rgba(255,255,255,0.7)' }}>Investment Goal</InputLabel>
+                <Select
+                  labelId="goal-label"
+                  value={goal}
+                  label="Investment Goal"
+                  onChange={e => setGoal(e.target.value)}
+                  sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.05)' }}
+                >
+                  <MenuItem value="">Select Investment Goal</MenuItem>
+                  <MenuItem value="Retirement">Retirement</MenuItem>
+                  <MenuItem value="Education">Education</MenuItem>
+                  <MenuItem value="Emergency">Emergency</MenuItem>
+                  <MenuItem value="Family">Family</MenuItem>
+                  <MenuItem value="Wealth Creation">Wealth Creation</MenuItem>
+                </Select>
+                <FormHelperText sx={{ color: 'rgba(255,255,255,0.7)' }}>Choose your main investment goal</FormHelperText>
+              </FormControl>
+              <Button type="submit" variant="contained" color="primary" size="large" sx={{ borderRadius: 2, fontWeight: 700, boxShadow: 3, mt: 2 }} fullWidth>
+                Submit
+              </Button>
+            </Box>
+          </Card>
+        </motion.div>
+      </Box>
     </>
   );
 }

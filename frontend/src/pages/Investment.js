@@ -1,100 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import styled from "styled-components";
 import axios from "axios";
 import NavBar from "../components/NavBar";
 import debounce from "lodash.debounce";
-
-const Container = styled.div`
-  background: ${({ theme }) => theme.background};
-  color: black;
-  min-height: 100vh;
-  padding: 32px;
-`;
-const Card = styled.div`
-  background: ${({ theme }) => theme.card};
-  padding: 24px;
-  border-radius: 8px;
-  margin-bottom: 24px;
-`;
-const Table = styled.table`
-  width: 100%;
-  background: ${({ theme }) => theme.card};
-  color: ${({ theme }) => theme.textPrimary};
-  border-radius: ${({ theme }) => theme.radiusMd};
-  border-collapse: collapse;
-`;
-const Th = styled.th`
-  border-bottom: 1px solid ${({ theme }) => theme.cardBorder};
-  padding: 12px;
-  text-align: center;
-  color: ${({ theme }) => theme.textSecondary};
-  background: ${({ theme }) => theme.backgroundTertiary};
-`;
-const Td = styled.td`
-  padding: 12px;
-  border-bottom: 1px solid ${({ theme }) => theme.cardBorder};
-  text-align: center;
-  color: ${({ theme }) => theme.textPrimary};
-`;
-const Button = styled.button`
-  background: ${({ theme }) => theme.gradientPrimary};
-  color: #fff;
-  border: none;
-  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
-  border-radius: ${({ theme }) => theme.radiusMd};
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-top: ${({ theme }) => theme.spacing.md};
-  &:hover {
-    box-shadow: ${({ theme }) => theme.shadowMd};
-    transform: translateY(-1px);
-  }
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-`;
-const StyledInput = styled.input`
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.cardBorder};
-  background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.textPrimary};
-  min-width: 120px;
-  margin-right: 8px;
-  font-size: 15px;
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.primary};
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.primary}30;
-  }
-`;
-const StyledSelect = styled.select`
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.cardBorder};
-  background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.textPrimary};
-  margin-right: 16px;
-  font-size: 15px;
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.primary};
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.primary}30;
-  }
-`;
-const SuggestionsDropdown = styled.div`
-  position: absolute;
-  z-index: 10;
-  background: #fff;
-  color: #111;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 100%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-`;
+import { Box, Card, Typography, Button, TextField, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Alert, CircularProgress, Autocomplete } from "@mui/material";
+import { motion } from "framer-motion";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import SellIcon from '@mui/icons-material/Sell';
 
 function formatDate(date) {
   if (!date) return "-";
@@ -119,7 +30,6 @@ function Investment() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchError, setSearchError] = useState("");
-  const searchRef = useRef();
   const [stockQuery, setStockQuery] = useState("");
   const [stockSuggestions, setStockSuggestions] = useState([]);
   const [showStockSuggestions, setShowStockSuggestions] = useState(false);
@@ -127,6 +37,7 @@ function Investment() {
   const [mfSuggestions, setMfSuggestions] = useState([]);
   const [showMfSuggestions, setShowMfSuggestions] = useState(false);
   const [virtualBalance, setVirtualBalance] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchInvestments = async () => {
     const res = await axios.get("/api/investments", {
@@ -195,65 +106,9 @@ function Investment() {
     }
   }, [mfQuery, type]);
 
-  const handleCompanyChange = (e) => {
-    const val = e.target.value;
-    setSelectedCompany(val);
-    const opt = options.find(o => o.name === val);
-    if (opt) setExpectedReturn(opt.expected_return !== undefined ? String(opt.expected_return) : "");
-    else setExpectedReturn("");
-  };
-
-  // Show top stocks on focus if box is empty
-  const handleStockInput = (e) => {
-    setStockQuery(e.target.value);
-    setShowStockSuggestions(true);
-    setSelectedCompany("");
-  };
-  const handleStockFocus = () => {
-    setShowStockSuggestions(true);
-    if (!stockQuery) fetchStockSuggestions("");
-  };
-  const handleStockSelect = (stock) => {
-    setSelectedCompany(stock.name);
-    setStockQuery(stock.name);
-    setShowStockSuggestions(false);
-    if (stock.expected_return !== undefined && stock.expected_return !== null) {
-      setExpectedReturn(String(stock.expected_return));
-    }
-  };
-
-  const handleMfInput = (e) => {
-    setMfQuery(e.target.value);
-    setShowMfSuggestions(true);
-    setSelectedCompany("");
-  };
-  const handleMfFocus = () => {
-    setShowMfSuggestions(true);
-    if (!mfQuery) fetchMfSuggestions("");
-  };
-  const handleMfSelect = (fund) => {
-    setSelectedCompany(fund.name);
-    setMfQuery(fund.name);
-    setShowMfSuggestions(false);
-    if (fund.expected_return !== undefined && fund.expected_return !== null) {
-      setExpectedReturn(String(fund.expected_return));
-    }
-  };
-
-  // Sort stock suggestions for best match
-  const sortedStockSuggestions = stockSuggestions.slice().sort((a, b) => {
-    const q = stockQuery.toLowerCase();
-    const aMatch = (a.name || "").toLowerCase().includes(q) || (a.symbol || "").toLowerCase().includes(q);
-    const bMatch = (b.name || "").toLowerCase().includes(q) || (b.symbol || "").toLowerCase().includes(q);
-    if (aMatch && !bMatch) return -1;
-    if (!aMatch && bMatch) return 1;
-    return 0;
-  });
-
   const handleAdd = async (e) => {
     e.preventDefault();
     setMsg("");
-    // Validate all fields
     if (!type || !selectedCompany || !amount || !expectedReturn) {
       setMsg("All fields are required.");
       return;
@@ -271,6 +126,7 @@ function Investment() {
       setMsg("Insufficient funds: amount exceeds your virtual balance.");
       return;
     }
+    setLoading(true);
     try {
       await axios.post("/api/investments", {
         type,
@@ -292,10 +148,13 @@ function Investment() {
       setVirtualBalance(res.data.virtual_balance);
     } catch {
       setMsg("Failed to add investment");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSell = async (id) => {
+    setLoading(true);
     try {
       await axios.post(`/api/investments/${id}/sell`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
@@ -304,98 +163,151 @@ function Investment() {
       fetchInvestments();
     } catch {
       setMsg("Failed to sell investment");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
       <NavBar />
-      <Container>
-        <Card>
-          <h2>Virtual Investments</h2>
-          <div style={{ marginBottom: 12 }}>Virtual Balance: ₹{virtualBalance !== null ? virtualBalance : '...'}</div>
-          <form onSubmit={handleAdd} autoComplete="off">
-            <StyledSelect value={type} onChange={e => setType(e.target.value)}>
-              <option value="Stock">Stock</option>
-              <option value="Mutual Fund">Mutual Fund</option>
-            </StyledSelect>
-            {type === "Stock" ? (
-              <div style={{ display: 'inline-block', position: 'relative', marginRight: 8 }}>
-                <StyledInput
-                  type="text"
-                  placeholder="Search Stock"
-                  value={stockQuery}
-                  onChange={handleStockInput}
-                  onFocus={handleStockFocus}
-                  autoComplete="off"
-                />
-                {showStockSuggestions && sortedStockSuggestions.length > 0 && (
-                  <SuggestionsDropdown>
-                    {sortedStockSuggestions.map((s, i) => (
-                      <div key={s.symbol + i} style={{ padding: 8, cursor: 'pointer', borderBottom: '1px solid #eee' }} onClick={() => handleStockSelect(s)}>
-                        <div><b>{s.name}</b> ({s.symbol}{s.exchange ? `, ${s.exchange}` : ''})</div>
-                        <div style={{ fontSize: 12, color: '#555' }}>Expected Return: {s.expected_return !== undefined && s.expected_return !== null ? `${s.expected_return}%` : 'N/A'}</div>
-                      </div>
-                    ))}
-                  </SuggestionsDropdown>
+      <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
+        <Box sx={{ maxWidth: 1000, mx: 'auto', px: 2 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, type: "spring" }}
+          >
+            <Card elevation={8} sx={{ borderRadius: 4, p: 4, mb: 4, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
+              <Typography variant="h4" fontWeight={700} sx={{ mb: 2, background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                Virtual Investments
+              </Typography>
+              <Typography variant="subtitle1" sx={{ mb: 2, color: 'rgba(255,255,255,0.8)' }}>
+                Virtual Balance: ₹{virtualBalance !== null ? virtualBalance : '...'}
+              </Typography>
+              <Box component="form" onSubmit={handleAdd} autoComplete="off" sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', mb: 2 }}>
+                <Select
+                  value={type}
+                  onChange={e => setType(e.target.value)}
+                  variant="filled"
+                  sx={{ minWidth: 140, bgcolor: 'rgba(255,255,255,0.05)', color: 'white' }}
+                >
+                  <MenuItem value="Stock">Stock</MenuItem>
+                  <MenuItem value="Mutual Fund">Mutual Fund</MenuItem>
+                </Select>
+                {type === "Stock" ? (
+                  <Autocomplete
+                    freeSolo
+                    options={stockSuggestions.map(s => s.name)}
+                    inputValue={stockQuery}
+                    onInputChange={(_, newInputValue) => setStockQuery(newInputValue)}
+                    onChange={(_, newValue) => {
+                      setSelectedCompany(newValue || "");
+                      const found = stockSuggestions.find(s => s.name === newValue);
+                      if (found && found.expected_return !== undefined) setExpectedReturn(String(found.expected_return));
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Search Stock" variant="filled" sx={{ bgcolor: 'rgba(255,255,255,0.05)', minWidth: 200, input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }} InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }} />
+                    )}
+                  />
+                ) : (
+                  <Autocomplete
+                    freeSolo
+                    options={mfSuggestions.map(f => f.name)}
+                    inputValue={mfQuery}
+                    onInputChange={(_, newInputValue) => setMfQuery(newInputValue)}
+                    onChange={(_, newValue) => {
+                      setSelectedCompany(newValue || "");
+                      const found = mfSuggestions.find(f => f.name === newValue);
+                      if (found && found.expected_return !== undefined) setExpectedReturn(String(found.expected_return));
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Search Mutual Fund" variant="filled" sx={{ bgcolor: 'rgba(255,255,255,0.05)', minWidth: 200, input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }} InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }} />
+                    )}
+                  />
                 )}
-              </div>
-            ) : (
-              <div style={{ display: 'inline-block', position: 'relative', marginRight: 8 }}>
-                <StyledInput
-                  type="text"
-                  placeholder="Search Mutual Fund"
-                  value={mfQuery}
-                  onChange={handleMfInput}
-                  onFocus={handleMfFocus}
-                  autoComplete="off"
+                <TextField
+                  type="number"
+                  label="Amount"
+                  value={amount}
+                  onChange={e => setAmount(e.target.value)}
+                  variant="filled"
+                  sx={{ minWidth: 120, bgcolor: 'rgba(255,255,255,0.05)', input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }}
+                  InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
                 />
-                {showMfSuggestions && mfSuggestions.length > 0 && (
-                  <SuggestionsDropdown>
-                    {mfSuggestions.map((f, i) => (
-                      <div key={f.symbol + i} style={{ padding: 8, cursor: 'pointer', borderBottom: '1px solid #eee' }} onClick={() => handleMfSelect(f)}>
-                        <div><b>{f.name}</b> ({f.symbol})</div>
-                        <div style={{ fontSize: 12, color: '#555' }}>Expected Return: {f.expected_return !== undefined && f.expected_return !== null ? `${f.expected_return}%` : 'N/A'}</div>
-                      </div>
+                <TextField
+                  type="text"
+                  label="Expected Return %"
+                  value={expectedReturn}
+                  onChange={e => setExpectedReturn(e.target.value)}
+                  variant="filled"
+                  sx={{ minWidth: 160, bgcolor: 'rgba(255,255,255,0.05)', input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }}
+                  InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AddCircleOutlineIcon />}
+                  sx={{ borderRadius: 2, fontWeight: 700, boxShadow: 3, minWidth: 180 }}
+                  disabled={loading}
+                >
+                  {loading ? <CircularProgress size={22} color="inherit" /> : "Add Investment"}
+                </Button>
+              </Box>
+              {msg && <Alert severity={msg.includes('fail') ? 'error' : msg.includes('added') ? 'success' : 'info'} sx={{ mb: 2 }}>{msg}</Alert>}
+            </Card>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, type: "spring" }}
+          >
+            <Card elevation={6} sx={{ borderRadius: 3, p: 3, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
+              <Typography variant="h5" fontWeight={700} sx={{ mb: 2, color: 'white' }}>
+                Current Investments
+              </Typography>
+              <TableContainer component={Paper} sx={{ background: 'rgba(255,255,255,0.03)', borderRadius: 3 }}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Type</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Company</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Amount</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Expected Return %</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Date Invested</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Action</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {investments.map(inv => (
+                      <TableRow key={inv._id} hover>
+                        <TableCell sx={{ color: 'white' }}>{inv.type}</TableCell>
+                        <TableCell sx={{ color: 'white' }}>{inv.company || "-"}</TableCell>
+                        <TableCell sx={{ color: 'white' }}>{inv.amount}</TableCell>
+                        <TableCell sx={{ color: 'white' }}>{inv.expected_return !== undefined ? inv.expected_return : "-"}</TableCell>
+                        <TableCell sx={{ color: 'white' }}>{formatDate(inv.date_invested)}</TableCell>
+                        <TableCell>
+                          <Button
+                            onClick={() => handleSell(inv._id)}
+                            variant="contained"
+                            color="secondary"
+                            startIcon={<SellIcon />}
+                            sx={{ borderRadius: 2, fontWeight: 700 }}
+                            disabled={loading}
+                          >
+                            Sell
+                          </Button>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </SuggestionsDropdown>
-                )}
-              </div>
-            )}
-            <StyledInput type="number" placeholder="Amount" value={amount} onChange={e => setAmount(e.target.value)} />
-            <StyledInput type="text" placeholder="Expected Return %" value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} />
-            <Button type="submit">Add Investment</Button>
-          </form>
-          {msg && <div style={{ color: "#e53935", marginTop: 8 }}>{msg}</div>}
-        </Card>
-        <Card>
-          <h3>Current Investments</h3>
-          <Table>
-            <thead>
-              <tr>
-                <Th>Type</Th>
-                <Th>Company</Th>
-                <Th>Amount</Th>
-                <Th>Expected Return %</Th>
-                <Th>Date Invested</Th>
-                <Th>Action</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {investments.map(inv => (
-                <tr key={inv._id}>
-                  <Td>{inv.type}</Td>
-                  <Td>{inv.company || "-"}</Td>
-                  <Td>{inv.amount}</Td>
-                  <Td>{inv.expected_return !== undefined ? inv.expected_return : "-"}</Td>
-                  <Td>{formatDate(inv.date_invested)}</Td>
-                  <Td><Button onClick={() => handleSell(inv._id)}>Sell</Button></Td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Card>
-      </Container>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Card>
+          </motion.div>
+        </Box>
+      </Box>
     </>
   );
 }

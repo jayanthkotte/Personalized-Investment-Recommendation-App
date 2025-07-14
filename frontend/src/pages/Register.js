@@ -1,220 +1,9 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
-
-const Container = styled.div`
-  background: ${({ theme }) => theme.background};
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing.lg};
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: ${({ theme }) => theme.gradientPrimary};
-    opacity: 0.05;
-    z-index: 0;
-  }
-`;
-
-const RegisterCard = styled.div`
-  background: ${({ theme }) => theme.card};
-  border-radius: ${({ theme }) => theme.radiusXl};
-  padding: ${({ theme }) => theme.spacing.xxl};
-  box-shadow: ${({ theme }) => theme.shadowXl};
-  width: 100%;
-  max-width: 450px;
-  position: relative;
-  z-index: 1;
-  border: 1px solid ${({ theme }) => theme.cardBorder};
-`;
-
-const Logo = styled.div`
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-  
-  .logo-icon {
-    width: 60px;
-    height: 60px;
-    background: ${({ theme }) => theme.gradientPrimary};
-    border-radius: ${({ theme }) => theme.radiusLg};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto ${({ theme }) => theme.spacing.md};
-    color: white;
-    font-weight: bold;
-    font-size: 24px;
-  }
-  
-  .logo-text {
-    font-size: 28px;
-    font-weight: 700;
-    color: ${({ theme }) => theme.textPrimary};
-    margin-bottom: ${({ theme }) => theme.spacing.xs};
-  }
-  
-  .logo-subtitle {
-    color: ${({ theme }) => theme.textSecondary};
-    font-size: 14px;
-  }
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.md};
-`;
-
-const InputGroup = styled.div`
-  position: relative;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: ${({ theme }) => theme.spacing.md};
-  border: 2px solid ${({ theme }) => theme.cardBorder};
-  border-radius: ${({ theme }) => theme.radiusMd};
-  background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.textPrimary};
-  font-size: 16px;
-  transition: all 0.2s ease;
-  
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.primary};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.primary}20;
-  }
-  
-  &::placeholder {
-    color: ${({ theme }) => theme.textTertiary};
-  }
-  
-  &.error {
-    border-color: ${({ theme }) => theme.danger};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.danger}20;
-  }
-`;
-
-const Button = styled.button`
-  background: ${({ theme }) => theme.gradientPrimary};
-  color: white;
-  border: none;
-  padding: ${({ theme }) => theme.spacing.md};
-  border-radius: ${({ theme }) => theme.radiusMd};
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: ${({ theme }) => theme.spacing.md};
-  
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: ${({ theme }) => theme.shadowLg};
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-`;
-
-const Error = styled.div`
-  background: ${({ theme }) => theme.dangerLight};
-  color: ${({ theme }) => theme.danger};
-  padding: ${({ theme }) => theme.spacing.md};
-  border-radius: ${({ theme }) => theme.radiusMd};
-  font-size: 14px;
-  border: 1px solid ${({ theme }) => theme.danger}30;
-`;
-
-const LinkText = styled.div`
-  text-align: center;
-  margin-top: ${({ theme }) => theme.spacing.lg};
-  color: ${({ theme }) => theme.textSecondary};
-  font-size: 14px;
-  
-  a {
-    color: ${({ theme }) => theme.primary};
-    text-decoration: none;
-    font-weight: 600;
-    
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
-
-const Divider = styled.div`
-  display: flex;
-  align-items: center;
-  margin: ${({ theme }) => theme.spacing.lg} 0;
-  
-  &::before,
-  &::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: ${({ theme }) => theme.cardBorder};
-  }
-  
-  span {
-    padding: 0 ${({ theme }) => theme.spacing.md};
-    color: ${({ theme }) => theme.textTertiary};
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-`;
-
-const PasswordStrength = styled.div`
-  margin-top: ${({ theme }) => theme.spacing.xs};
-  font-size: 12px;
-  color: ${({ theme }) => theme.textSecondary};
-  
-  .strength-bar {
-    height: 4px;
-    background: ${({ theme }) => theme.backgroundTertiary};
-    border-radius: 2px;
-    margin-top: 4px;
-    overflow: hidden;
-    
-    .strength-fill {
-      height: 100%;
-      transition: all 0.3s ease;
-      border-radius: 2px;
-      
-      &.weak {
-        background: ${({ theme }) => theme.danger};
-        width: 33%;
-      }
-      
-      &.medium {
-        background: ${({ theme }) => theme.warning};
-        width: 66%;
-      }
-      
-      &.strong {
-        background: ${({ theme }) => theme.success};
-        width: 100%;
-      }
-    }
-  }
-`;
+import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { Box, Card, TextField, Button, Typography, Alert, CircularProgress, Link, Divider, LinearProgress } from "@mui/material";
+import { motion } from "framer-motion";
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 
 function Register() {
   const [name, setName] = useState("");
@@ -230,15 +19,14 @@ function Register() {
     if (password.length < 8) return 'medium';
     return 'strong';
   };
-
   const passwordStrength = validatePassword(password);
+  const passwordStrengthValue = password.length === 0 ? 0 : passwordStrength === 'weak' ? 33 : passwordStrength === 'medium' ? 66 : 100;
+  const passwordStrengthColor = passwordStrength === 'weak' ? 'error' : passwordStrength === 'medium' ? 'warning' : 'success';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    
-    // Username validation: must not start with a number and not be all numbers
     if (/^\d/.test(name)) {
       setError("Username must not start with a number.");
       setLoading(false);
@@ -249,8 +37,6 @@ function Register() {
       setLoading(false);
       return;
     }
-    
-    // Email validation: must not start with a number and not be all numbers
     if (/^\d/.test(email)) {
       setError("Invalid Email address. Please add a valid Email address");
       setLoading(false);
@@ -261,39 +47,30 @@ function Register() {
       setLoading(false);
       return;
     }
-    
-    // Email format validation
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       setError("Invalid Email address. Please add a valid Email address");
       setLoading(false);
       return;
     }
-    
-    // Email should only contain letters, numbers, @ and .
     if (!/^[a-zA-Z0-9@.]+$/.test(email)) {
       setError("Invalid Email address. Please add a valid Email address");
       setLoading(false);
       return;
     }
-    
-    // Before @, only letters and numbers allowed
     const emailParts = email.split('@');
     if (emailParts.length !== 2 || !/^[a-zA-Z0-9]+$/.test(emailParts[0])) {
       setError("Invalid Email address. Please add a valid Email address");
       setLoading(false);
       return;
     }
-    
-    // Password match validation
     if (password !== rePassword) {
       setError("Passwords do not match.");
       setLoading(false);
       return;
     }
-    
     try {
       await axios.post("/api/register", { name, email, password });
-      navigate("/risk-profile");
+      navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "Registration failed. Please try again.");
     } finally {
@@ -302,80 +79,101 @@ function Register() {
   };
 
   return (
-    <Container>
-      <RegisterCard>
-        <Logo>
-          <div className="logo-icon">₹</div>
-          <div className="logo-text">InvestSmart</div>
-          <div className="logo-subtitle">Join thousands of smart investors</div>
-        </Logo>
-        
-        {error && <Error>{error}</Error>}
-        
-        <Form onSubmit={handleSubmit}>
-          <InputGroup>
-            <Input
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, type: "spring" }}
+        style={{ width: '100%', maxWidth: 450 }}
+      >
+        <Card elevation={8} sx={{ borderRadius: 4, p: 4, position: 'relative', overflow: 'visible', background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
+          <Box sx={{ textAlign: 'center', mb: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
+              <PersonAddAlt1Icon sx={{ fontSize: 48, color: 'secondary.main', bgcolor: 'white', borderRadius: '50%', p: 1, boxShadow: 3 }} />
+            </Box>
+            <Typography variant="h4" fontWeight={700} sx={{ background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
+              Create Account
+            </Typography>
+            <Typography variant="subtitle2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+              Join thousands of smart investors
+            </Typography>
+          </Box>
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextField
+              label="Full Name"
               type="text"
-              placeholder="Enter your full name"
               value={name}
               onChange={e => setName(e.target.value)}
               required
+              fullWidth
+              variant="filled"
+              sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
+              InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
             />
-          </InputGroup>
-          
-          <InputGroup>
-            <Input
+            <TextField
+              label="Email"
               type="email"
-              placeholder="Enter your email address"
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
+              fullWidth
+              variant="filled"
+              sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
+              InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
             />
-          </InputGroup>
-          
-          <InputGroup>
-            <Input
+            <TextField
+              label="Password"
               type="password"
-              placeholder="Create a password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
+              fullWidth
+              variant="filled"
+              sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
+              InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
+              helperText={password && `Password strength: ${passwordStrength}`}
             />
             {password && (
-              <PasswordStrength>
-                Password strength: {passwordStrength}
-                <div className="strength-bar">
-                  <div className={`strength-fill ${passwordStrength}`}></div>
-                </div>
-              </PasswordStrength>
+              <LinearProgress variant="determinate" value={passwordStrengthValue} color={passwordStrengthColor} sx={{ height: 6, borderRadius: 2, mb: 1, bgcolor: 'rgba(255,255,255,0.1)' }} />
             )}
-          </InputGroup>
-          
-          <InputGroup>
-            <Input
+            <TextField
+              label="Confirm Password"
               type="password"
-              placeholder="Confirm your password"
               value={rePassword}
               onChange={e => setRePassword(e.target.value)}
-              className={rePassword && password !== rePassword ? 'error' : ''}
               required
+              fullWidth
+              variant="filled"
+              sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
+              InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
+              error={rePassword && password !== rePassword}
+              helperText={rePassword && password !== rePassword ? 'Passwords do not match' : ''}
             />
-          </InputGroup>
-          
-          <Button type="submit" disabled={loading}>
-            {loading ? "Creating Account..." : "Create Account"}
-          </Button>
-        </Form>
-        
-        <Divider>
-          <span>or</span>
-        </Divider>
-        
-        <LinkText>
-          Already have an account? <Link to="/login">Sign In</Link>
-        </LinkText>
-      </RegisterCard>
-    </Container>
+            <Button
+              type="submit"
+              variant="contained"
+              color="secondary"
+              size="large"
+              sx={{ mt: 2, borderRadius: 2, fontWeight: 700, boxShadow: 3 }}
+              disabled={loading}
+              fullWidth
+            >
+              {loading ? <CircularProgress size={24} color="inherit" /> : "Create Account"}
+            </Button>
+          </Box>
+          <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.1)' }}>
+            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)' }}>OR</Typography>
+          </Divider>
+          <Typography align="center" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+            Already have an account?{' '}
+            <Link component={RouterLink} to="/login" color="primary" fontWeight={700} underline="hover">
+              Sign In
+            </Link>
+          </Typography>
+        </Card>
+      </motion.div>
+    </Box>
   );
 }
 
