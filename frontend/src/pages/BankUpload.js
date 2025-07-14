@@ -5,7 +5,7 @@ import NavBar from "../components/NavBar";
 
 const Container = styled.div`
   background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.text};
+  color: black;
   min-height: 100vh;
   padding: 32px;
 `;
@@ -18,28 +18,58 @@ const Card = styled.div`
 const Table = styled.table`
   width: 100%;
   background: ${({ theme }) => theme.card};
-  color: ${({ theme }) => theme.text};
-  border-radius: 8px;
+  color: ${({ theme }) => theme.textPrimary};
+  border-radius: ${({ theme }) => theme.radiusMd};
   border-collapse: collapse;
 `;
 const Th = styled.th`
-  border-bottom: 1px solid ${({ theme }) => theme.border};
+  border-bottom: 1px solid ${({ theme }) => theme.cardBorder};
   padding: 12px;
   text-align: center;
+  color: ${({ theme }) => theme.textSecondary};
+  background: ${({ theme }) => theme.backgroundTertiary};
 `;
 const Td = styled.td`
   padding: 12px;
-  border-bottom: 1px solid ${({ theme }) => theme.border};
+  border-bottom: 1px solid ${({ theme }) => theme.cardBorder};
   text-align: center;
+  color: ${({ theme }) => theme.textPrimary};
 `;
+const StyledFileInput = styled.input`
+  display: none;
+`;
+
+const FileLabel = styled.label`
+  display: inline-block;
+  background: ${({ theme }) => theme.gradientPrimary};
+  color: #fff;
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  border-radius: ${({ theme }) => theme.radiusMd};
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: ${({ theme }) => theme.spacing.md};
+  transition: all 0.2s;
+  &:hover {
+    box-shadow: ${({ theme }) => theme.shadowMd};
+    transform: translateY(-1px);
+  }
+`;
+
 const Button = styled.button`
-  background: ${({ theme }) => theme.accent};
+  background: ${({ theme }) => theme.gradientPrimary};
   color: #fff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  margin-top: 10px;
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  border-radius: ${({ theme }) => theme.radiusMd};
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+  &:hover {
+    box-shadow: ${({ theme }) => theme.shadowMd};
+    transform: translateY(-1px);
+  }
 `;
 
 function BankUpload() {
@@ -93,8 +123,9 @@ function BankUpload() {
       <Container>
         <Card>
           <h2>Bank Data Upload / Sync</h2>
-          <input type="file" accept=".csv" onChange={handleFile} />
-          <Button onClick={handleUpload}>Upload</Button>
+          <FileLabel htmlFor="file-upload">Choose File</FileLabel>
+          <StyledFileInput id="file-upload" type="file" accept=".csv" onChange={handleFile} />
+          <Button onClick={handleUpload} disabled={!file}>Upload</Button>
           {msg && <div style={{ color: "#e53935", marginTop: 8 }}>{msg}</div>}
           {behavior && <div>User Financial Behavior: <b>{behavior}</b></div>}
         </Card>

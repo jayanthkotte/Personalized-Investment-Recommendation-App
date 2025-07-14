@@ -4,7 +4,7 @@ import NavBar from "../components/NavBar";
 
 const Container = styled.div`
   background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.text};
+  color: black;
   min-height: 100vh;
   display: flex;
   align-items: center;

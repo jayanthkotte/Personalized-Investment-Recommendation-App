@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.text};
+  color: black;
   min-height: 100vh;
   padding: 32px;
 `;
@@ -17,30 +17,59 @@ const Card = styled.div`
   margin-bottom: 24px;
 `;
 const Button = styled.button`
-  background: ${({ theme }) => theme.accent};
+  background: ${({ theme }) => theme.gradientPrimary};
   color: #fff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  margin-top: 10px;
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  border-radius: ${({ theme }) => theme.radiusMd};
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
+  margin-top: ${({ theme }) => theme.spacing.md};
+  &:hover {
+    box-shadow: ${({ theme }) => theme.shadowMd};
+    transform: translateY(-1px);
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
 `;
 const Table = styled.table`
   width: 100%;
   background: ${({ theme }) => theme.card};
-  color: ${({ theme }) => theme.text};
-  border-radius: 8px;
+  color: ${({ theme }) => theme.textPrimary};
+  border-radius: ${({ theme }) => theme.radiusMd};
   border-collapse: collapse;
 `;
 const Th = styled.th`
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid ${({ theme }) => theme.cardBorder};
   padding: 12px;
   text-align: center;
+  color: ${({ theme }) => theme.textSecondary};
+  background: ${({ theme }) => theme.backgroundTertiary};
 `;
 const Td = styled.td`
   padding: 12px;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid ${({ theme }) => theme.cardBorder};
   text-align: center;
+  color: ${({ theme }) => theme.textPrimary};
+`;
+const StyledInput = styled.input`
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.cardBorder};
+  background: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.textPrimary};
+  min-width: 80px;
+  margin-right: 16px;
+  font-size: 15px;
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.primary};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.primary}30;
+  }
 `;
 
 function Recommendation() {
@@ -199,9 +228,9 @@ function Recommendation() {
           <h2>Recommendation using Risk, Tenure, and Capital</h2>
           <div style={{ marginBottom: 12 }}>
             <label>Tenure (1-10): </label>
-            <input type="number" min="1" max="10" value={tenure} onChange={e => setTenure(e.target.value)} style={{ marginRight: 16, background: '#fff', color: '#000', border: '1px solid #ccc', borderRadius: 4, padding: 8 }} />
+            <StyledInput type="number" min="1" max="10" value={tenure} onChange={e => setTenure(e.target.value)} />
             <label>Capital (1000-100000): </label>
-            <input type="number" min="1000" max="100000" value={capital} onChange={e => setCapital(e.target.value)} style={{ background: '#fff', color: '#000', border: '1px solid #ccc', borderRadius: 4, padding: 8 }} />
+            <StyledInput type="number" min="1000" max="100000" value={capital} onChange={e => setCapital(e.target.value)} />
           </div>
           <Button onClick={handleGetRtcRecommendations} disabled={rtcLoading || !prereq.risk || !prereq.behavior}>
             {rtcLoading ? "Loading..." : "Get Recommendations"}

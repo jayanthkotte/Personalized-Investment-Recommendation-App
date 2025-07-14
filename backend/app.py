@@ -15,6 +15,24 @@ mongo.init_app(app)
 jwt.init_app(app)
 CORS(app)
 
+# --- Index creation for optimal performance ---
+def create_indexes():
+    # Users: unique email
+    mongo.db.users.create_index("email", unique=True)
+    # Transactions: user_id, date
+    mongo.db.transactions.create_index([("user_id", 1), ("date", -1)])
+    # Investments: user_id, date_invested
+    mongo.db.investments.create_index([("user_id", 1), ("date_invested", -1)])
+    # Investment options: investment_id (unique), type
+    mongo.db.investment_options.create_index("investment_id", unique=True)
+    mongo.db.investment_options.create_index("type")
+    # Recommendations: user_id, createdAt
+    mongo.db.recommendations.create_index([("user_id", 1), ("createdAt", -1)])
+
+# Call index creation at startup
+with app.app_context():
+    create_indexes()
+
 # Register blueprints
 from auth import auth_bp
 from user import user_bp

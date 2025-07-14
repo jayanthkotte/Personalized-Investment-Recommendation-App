@@ -6,7 +6,7 @@ import debounce from "lodash.debounce";
 
 const Container = styled.div`
   background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.text};
+  color: black;
   min-height: 100vh;
   padding: 32px;
 `;
@@ -19,28 +19,81 @@ const Card = styled.div`
 const Table = styled.table`
   width: 100%;
   background: ${({ theme }) => theme.card};
-  color: ${({ theme }) => theme.text};
-  border-radius: 8px;
+  color: ${({ theme }) => theme.textPrimary};
+  border-radius: ${({ theme }) => theme.radiusMd};
   border-collapse: collapse;
 `;
 const Th = styled.th`
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid ${({ theme }) => theme.cardBorder};
   padding: 12px;
   text-align: center;
+  color: ${({ theme }) => theme.textSecondary};
+  background: ${({ theme }) => theme.backgroundTertiary};
 `;
 const Td = styled.td`
   padding: 12px;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid ${({ theme }) => theme.cardBorder};
   text-align: center;
+  color: ${({ theme }) => theme.textPrimary};
 `;
 const Button = styled.button`
-  background: ${({ theme }) => theme.accent};
+  background: ${({ theme }) => theme.gradientPrimary};
   color: #fff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  margin-top: 10px;
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  border-radius: ${({ theme }) => theme.radiusMd};
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
+  margin-top: ${({ theme }) => theme.spacing.md};
+  &:hover {
+    box-shadow: ${({ theme }) => theme.shadowMd};
+    transform: translateY(-1px);
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+const StyledInput = styled.input`
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.cardBorder};
+  background: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.textPrimary};
+  min-width: 120px;
+  margin-right: 8px;
+  font-size: 15px;
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.primary};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.primary}30;
+  }
+`;
+const StyledSelect = styled.select`
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.cardBorder};
+  background: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.textPrimary};
+  margin-right: 16px;
+  font-size: 15px;
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.primary};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.primary}30;
+  }
+`;
+const SuggestionsDropdown = styled.div`
+  position: absolute;
+  z-index: 10;
+  background: #fff;
+  color: #111;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 `;
 
 function formatDate(date) {
@@ -262,57 +315,55 @@ function Investment() {
           <h2>Virtual Investments</h2>
           <div style={{ marginBottom: 12 }}>Virtual Balance: ₹{virtualBalance !== null ? virtualBalance : '...'}</div>
           <form onSubmit={handleAdd} autoComplete="off">
-            <select value={type} onChange={e => setType(e.target.value)} style={{ padding: 8, borderRadius: 4, border: '1px solid #fff', background: '#fff', color: '#000', marginRight: 16 }}>
+            <StyledSelect value={type} onChange={e => setType(e.target.value)}>
               <option value="Stock">Stock</option>
               <option value="Mutual Fund">Mutual Fund</option>
-            </select>
+            </StyledSelect>
             {type === "Stock" ? (
               <div style={{ display: 'inline-block', position: 'relative', marginRight: 8 }}>
-                <input
+                <StyledInput
                   type="text"
                   placeholder="Search Stock"
                   value={stockQuery}
                   onChange={handleStockInput}
-                  style={{ padding: 8, borderRadius: 4, border: '1px solid #fff', background: '#fff', color: '#000', minWidth: 180 }}
                   onFocus={handleStockFocus}
                   autoComplete="off"
                 />
                 {showStockSuggestions && sortedStockSuggestions.length > 0 && (
-                  <div style={{ position: 'absolute', zIndex: 10, background: '#fff', color: '#000', border: '1px solid #ccc', borderRadius: 4, width: '100%' }}>
+                  <SuggestionsDropdown>
                     {sortedStockSuggestions.map((s, i) => (
                       <div key={s.symbol + i} style={{ padding: 8, cursor: 'pointer', borderBottom: '1px solid #eee' }} onClick={() => handleStockSelect(s)}>
                         <div><b>{s.name}</b> ({s.symbol}{s.exchange ? `, ${s.exchange}` : ''})</div>
                         <div style={{ fontSize: 12, color: '#555' }}>Expected Return: {s.expected_return !== undefined && s.expected_return !== null ? `${s.expected_return}%` : 'N/A'}</div>
                       </div>
                     ))}
-                  </div>
+                  </SuggestionsDropdown>
                 )}
               </div>
             ) : (
               <div style={{ display: 'inline-block', position: 'relative', marginRight: 8 }}>
-                <input
+                <StyledInput
                   type="text"
                   placeholder="Search Mutual Fund"
                   value={mfQuery}
                   onChange={handleMfInput}
-                  style={{ padding: 8, borderRadius: 4, border: '1px solid #fff', background: '#fff', color: '#000', minWidth: 180 }}
                   onFocus={handleMfFocus}
                   autoComplete="off"
                 />
                 {showMfSuggestions && mfSuggestions.length > 0 && (
-                  <div style={{ position: 'absolute', zIndex: 10, background: '#fff', color: '#000', border: '1px solid #ccc', borderRadius: 4, width: '100%' }}>
+                  <SuggestionsDropdown>
                     {mfSuggestions.map((f, i) => (
                       <div key={f.symbol + i} style={{ padding: 8, cursor: 'pointer', borderBottom: '1px solid #eee' }} onClick={() => handleMfSelect(f)}>
                         <div><b>{f.name}</b> ({f.symbol})</div>
                         <div style={{ fontSize: 12, color: '#555' }}>Expected Return: {f.expected_return !== undefined && f.expected_return !== null ? `${f.expected_return}%` : 'N/A'}</div>
                       </div>
                     ))}
-                  </div>
+                  </SuggestionsDropdown>
                 )}
               </div>
             )}
-            <input type="number" placeholder="Amount" value={amount} onChange={e => setAmount(e.target.value)} style={{ marginRight: 8, padding: 8, borderRadius: 4, border: '1px solid #fff', background: '#fff', color: '#000', minWidth: 120 }} />
-            <input type="text" placeholder="Expected Return %" value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} style={{ marginRight: 8, padding: 8, borderRadius: 4, border: '1px solid #fff', background: '#fff', color: '#000', minWidth: 120 }} />
+            <StyledInput type="number" placeholder="Amount" value={amount} onChange={e => setAmount(e.target.value)} />
+            <StyledInput type="text" placeholder="Expected Return %" value={expectedReturn} onChange={e => setExpectedReturn(e.target.value)} />
             <Button type="submit">Add Investment</Button>
           </form>
           {msg && <div style={{ color: "#e53935", marginTop: 8 }}>{msg}</div>}

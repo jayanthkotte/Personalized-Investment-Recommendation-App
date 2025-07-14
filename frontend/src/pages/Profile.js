@@ -10,7 +10,7 @@ const BEHAVIORS = ["Saver", "Spender", "Investor"];
 
 const Container = styled.div`
   background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.text};
+  color: black;
   min-height: 100vh;
   padding: 32px;
 `;
@@ -21,25 +21,43 @@ const Card = styled.div`
   margin-bottom: 24px;
 `;
 const Button = styled.button`
-  background: ${({ theme }) => theme.accent};
+  background: ${({ theme }) => theme.gradientPrimary};
   color: #fff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  margin-top: 10px;
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  border-radius: ${({ theme }) => theme.radiusMd};
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
+  margin-top: ${({ theme }) => theme.spacing.md};
+  margin-right: ${({ theme }) => theme.spacing.md};
+  &:hover {
+    box-shadow: ${({ theme }) => theme.shadowMd};
+    transform: translateY(-1px);
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
 `;
 const Error = styled.div`
   color: ${({ theme }) => theme.accent};
   margin-bottom: 10px;
 `;
 const Input = styled.input`
-  background: #fff;
-  color: #000;
-  border: 1px solid #ccc;
+  background: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.textPrimary};
+  border: 1px solid ${({ theme }) => theme.cardBorder};
   padding: 10px;
   margin: 8px 0;
   border-radius: 4px;
+  font-size: 15px;
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.primary};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.primary}30;
+  }
 `;
 
 function Profile() {

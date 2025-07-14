@@ -5,7 +5,7 @@ import NavBar from "../components/NavBar";
 
 const Container = styled.div`
   background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.text};
+  color: black;
   min-height: 100vh;
   padding: 32px;
 `;
@@ -14,6 +14,27 @@ const Card = styled.div`
   padding: 24px;
   border-radius: 8px;
   margin-bottom: 24px;
+`;
+
+const Button = styled.button`
+  background: ${({ theme }) => theme.gradientPrimary};
+  color: #fff;
+  border: none;
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  border-radius: ${({ theme }) => theme.radiusMd};
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: ${({ theme }) => theme.spacing.md};
+  &:hover {
+    box-shadow: ${({ theme }) => theme.shadowMd};
+    transform: translateY(-1px);
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
 `;
 
 const tipsByBehaviour = {

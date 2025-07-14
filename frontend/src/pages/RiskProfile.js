@@ -65,17 +65,40 @@ const Card = styled.div`
   margin-bottom: 24px;
 `;
 const Button = styled.button`
-  background: ${({ theme }) => theme.accent};
+  background: ${({ theme }) => theme.gradientPrimary};
   color: #fff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  margin-top: 10px;
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  border-radius: ${({ theme }) => theme.radiusMd};
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
+  margin-top: ${({ theme }) => theme.spacing.md};
+  &:hover {
+    box-shadow: ${({ theme }) => theme.shadowMd};
+    transform: translateY(-1px);
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+const Heading = styled.h2`
+  color: #6EC1E4;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
 `;
 const Error = styled.div`
-  color: ${({ theme }) => theme.accent};
+  color: #6EC1E4;
   margin-bottom: 10px;
+`;
+const QuestionText = styled.div`
+  color: ${({ theme }) => theme.textPrimary};
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 4px;
 `;
 
 function RiskProfile() {
@@ -120,14 +143,14 @@ function RiskProfile() {
       <NavBar />
       <Container>
         <Card>
-          <h2>Risk Profiling Questionnaire</h2>
+          <Heading>Risk Profiling Questionnaire</Heading>
           {error && <Error>{error}</Error>}
           <form onSubmit={handleSubmit}>
             {questions.map((q, i) => (
               <div key={i} style={{ marginBottom: 16 }}>
-                <div>{i + 1}. {q.q}</div>
+                <QuestionText>{i + 1}. {q.q}</QuestionText>
                 {q.options.map((opt, j) => (
-                  <label key={j} style={{ marginRight: 16 }}>
+                  <label key={j} style={{ marginRight: 16, color: '#000' }}>
                     <input
                       type="radio"
                       name={`q${i}`}
