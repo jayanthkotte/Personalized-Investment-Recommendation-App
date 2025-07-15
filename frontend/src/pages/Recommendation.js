@@ -116,123 +116,129 @@ function Recommendation() {
   return (
     <>
       <NavBar />
-      <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
-        <Box sx={{ maxWidth: 1000, mx: 'auto', px: 2 }}>
-          {prereqMsg && (
+      <motion.div
+        initial={{ x: 100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.7 }}
+      >
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
+          <Box sx={{ maxWidth: 1000, mx: 'auto', px: 2 }}>
+            {prereqMsg && (
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, type: "spring" }}
+              >
+                <Card elevation={8} sx={{ borderRadius: 4, p: 4, mb: 4, background: 'linear-gradient(90deg, #fff3cd 0%, #ffeeba 100%)', color: '#856404', border: '1px solid #ffeeba' }}>
+                  <Typography variant="h6" fontWeight={700}>{prereqMsg}</Typography>
+                  <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+                    {!prereq.risk && <Button onClick={() => navigate('/risk-profile')} variant="contained" color="primary">Go to Risk Profile</Button>}
+                    {!prereq.behavior && <Button onClick={() => navigate('/bank-upload')} variant="contained" color="secondary">Go to Bank Upload</Button>}
+                  </Box>
+                </Card>
+              </motion.div>
+            )}
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, type: "spring" }}
+              transition={{ duration: 0.8, type: "spring" }}
             >
-              <Card elevation={8} sx={{ borderRadius: 4, p: 4, mb: 4, background: 'linear-gradient(90deg, #fff3cd 0%, #ffeeba 100%)', color: '#856404', border: '1px solid #ffeeba' }}>
-                <Typography variant="h6" fontWeight={700}>{prereqMsg}</Typography>
-                <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
-                  {!prereq.risk && <Button onClick={() => navigate('/risk-profile')} variant="contained" color="primary">Go to Risk Profile</Button>}
-                  {!prereq.behavior && <Button onClick={() => navigate('/bank-upload')} variant="contained" color="secondary">Go to Bank Upload</Button>}
-                </Box>
+              <Card elevation={8} sx={{ borderRadius: 4, p: 4, mb: 4, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
+                <Typography variant="h5" fontWeight={700} sx={{ mb: 2, background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  Recommendation using Financial Behavior, Risk Profile, and Goal
+                </Typography>
+                <Button onClick={handleGetRecommendations} disabled={loading || !prereq.risk || !prereq.behavior} variant="contained" color="primary" sx={{ borderRadius: 2, fontWeight: 700, mb: 2 }}>
+                  {loading ? <CircularProgress size={22} color="inherit" /> : "Get Recommendations"}
+                </Button>
+                {msg && <Alert severity="error" sx={{ mb: 2 }}>{msg}</Alert>}
+                {recs && recs.length > 0 && (
+                  <TableContainer component={Paper} sx={{ background: 'rgba(255,255,255,0.03)', borderRadius: 3, mt: 3 }}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Name</TableCell>
+                          <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Type</TableCell>
+                          <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Risk</TableCell>
+                          <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Expected Return</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {recs.map((r, i) => (
+                          <TableRow key={i} hover>
+                            <TableCell sx={{ color: 'white' }}>{r.name}</TableCell>
+                            <TableCell sx={{ color: 'white' }}>{r.type}</TableCell>
+                            <TableCell sx={{ color: 'white' }}>{r.risk}</TableCell>
+                            <TableCell sx={{ color: 'white' }}>{r.expected_return}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                )}
               </Card>
             </motion.div>
-          )}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, type: "spring" }}
-          >
-            <Card elevation={8} sx={{ borderRadius: 4, p: 4, mb: 4, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
-              <Typography variant="h5" fontWeight={700} sx={{ mb: 2, background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                Recommendation using Financial Behavior, Risk Profile, and Goal
-              </Typography>
-              <Button onClick={handleGetRecommendations} disabled={loading || !prereq.risk || !prereq.behavior} variant="contained" color="primary" sx={{ borderRadius: 2, fontWeight: 700, mb: 2 }}>
-                {loading ? <CircularProgress size={22} color="inherit" /> : "Get Recommendations"}
-              </Button>
-              {msg && <Alert severity="error" sx={{ mb: 2 }}>{msg}</Alert>}
-              {recs && recs.length > 0 && (
-                <TableContainer component={Paper} sx={{ background: 'rgba(255,255,255,0.03)', borderRadius: 3, mt: 3 }}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Name</TableCell>
-                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Type</TableCell>
-                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Risk</TableCell>
-                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Expected Return</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {recs.map((r, i) => (
-                        <TableRow key={i} hover>
-                          <TableCell sx={{ color: 'white' }}>{r.name}</TableCell>
-                          <TableCell sx={{ color: 'white' }}>{r.type}</TableCell>
-                          <TableCell sx={{ color: 'white' }}>{r.risk}</TableCell>
-                          <TableCell sx={{ color: 'white' }}>{r.expected_return}</TableCell>
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, type: "spring" }}
+            >
+              <Card elevation={8} sx={{ borderRadius: 4, p: 4, mb: 4, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
+                <Typography variant="h5" fontWeight={700} sx={{ mb: 2, background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  Recommendation using Risk, Tenure, and Capital
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 2, flexWrap: 'wrap' }}>
+                  <TextField
+                    label="Tenure (1-10)"
+                    type="number"
+                    value={tenure}
+                    onChange={e => setTenure(e.target.value)}
+                    variant="filled"
+                    sx={{ minWidth: 140, bgcolor: 'rgba(255,255,255,0.05)', input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }}
+                    InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
+                  />
+                  <TextField
+                    label="Capital (1000-100000)"
+                    type="number"
+                    value={capital}
+                    onChange={e => setCapital(e.target.value)}
+                    variant="filled"
+                    sx={{ minWidth: 180, bgcolor: 'rgba(255,255,255,0.05)', input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }}
+                    InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
+                  />
+                  <Button onClick={handleGetRtcRecommendations} disabled={rtcLoading || !prereq.risk || !prereq.behavior} variant="contained" color="secondary" sx={{ borderRadius: 2, fontWeight: 700, minWidth: 200 }}>
+                    {rtcLoading ? <CircularProgress size={22} color="inherit" /> : "Get Recommendations"}
+                  </Button>
+                </Box>
+                {rtcMsg && <Alert severity="error" sx={{ mb: 2 }}>{rtcMsg}</Alert>}
+                {rtcRecs && rtcRecs.length > 0 && (
+                  <TableContainer component={Paper} sx={{ background: 'rgba(255,255,255,0.03)', borderRadius: 3, mt: 3 }}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Name</TableCell>
+                          <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Type</TableCell>
+                          <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Risk</TableCell>
+                          <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Expected Return</TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              )}
-            </Card>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, type: "spring" }}
-          >
-            <Card elevation={8} sx={{ borderRadius: 4, p: 4, mb: 4, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
-              <Typography variant="h5" fontWeight={700} sx={{ mb: 2, background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                Recommendation using Risk, Tenure, and Capital
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 2, flexWrap: 'wrap' }}>
-                <TextField
-                  label="Tenure (1-10)"
-                  type="number"
-                  value={tenure}
-                  onChange={e => setTenure(e.target.value)}
-                  variant="filled"
-                  sx={{ minWidth: 140, bgcolor: 'rgba(255,255,255,0.05)', input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }}
-                  InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
-                />
-                <TextField
-                  label="Capital (1000-100000)"
-                  type="number"
-                  value={capital}
-                  onChange={e => setCapital(e.target.value)}
-                  variant="filled"
-                  sx={{ minWidth: 180, bgcolor: 'rgba(255,255,255,0.05)', input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }}
-                  InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
-                />
-                <Button onClick={handleGetRtcRecommendations} disabled={rtcLoading || !prereq.risk || !prereq.behavior} variant="contained" color="secondary" sx={{ borderRadius: 2, fontWeight: 700, minWidth: 200 }}>
-                  {rtcLoading ? <CircularProgress size={22} color="inherit" /> : "Get Recommendations"}
-                </Button>
-              </Box>
-              {rtcMsg && <Alert severity="error" sx={{ mb: 2 }}>{rtcMsg}</Alert>}
-              {rtcRecs && rtcRecs.length > 0 && (
-                <TableContainer component={Paper} sx={{ background: 'rgba(255,255,255,0.03)', borderRadius: 3, mt: 3 }}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Name</TableCell>
-                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Type</TableCell>
-                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Risk</TableCell>
-                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Expected Return</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rtcRecs.map((r, i) => (
-                        <TableRow key={i} hover>
-                          <TableCell sx={{ color: 'white' }}>{r.name}</TableCell>
-                          <TableCell sx={{ color: 'white' }}>{r.type}</TableCell>
-                          <TableCell sx={{ color: 'white' }}>{r.risk}</TableCell>
-                          <TableCell sx={{ color: 'white' }}>{r.expected_return}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              )}
-            </Card>
-          </motion.div>
+                      </TableHead>
+                      <TableBody>
+                        {rtcRecs.map((r, i) => (
+                          <TableRow key={i} hover>
+                            <TableCell sx={{ color: 'white' }}>{r.name}</TableCell>
+                            <TableCell sx={{ color: 'white' }}>{r.type}</TableCell>
+                            <TableCell sx={{ color: 'white' }}>{r.risk}</TableCell>
+                            <TableCell sx={{ color: 'white' }}>{r.expected_return}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                )}
+              </Card>
+            </motion.div>
+          </Box>
         </Box>
-      </Box>
+      </motion.div>
     </>
   );
 }

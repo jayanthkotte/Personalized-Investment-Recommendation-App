@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import NavBar from "../components/NavBar";
+import { motion } from "framer-motion";
 
 const Container = styled.div`
   background: ${({ theme }) => theme.background};
@@ -148,22 +149,28 @@ function Tips() {
   return (
     <>
       <NavBar />
-      <Container>
-        <Card>
-          <h2>Personalized Financial Tips</h2>
-          {loading && <div>Loading...</div>}
-          {!loading && getTips().length === 0 && (
-            <div style={{ color: '#e53935' }}>No tips available. Please complete your profile and risk assessment.</div>
-          )}
-          {!loading && getTips().length > 0 && (
-            <ul>
-              {getTips().map((tip, i) => (
-                <li key={i}>{tip}</li>
-              ))}
-            </ul>
-          )}
-        </Card>
-      </Container>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7, staggerChildren: 0.2 }}
+      >
+        <Container>
+          <Card>
+            <h2>Personalized Financial Tips</h2>
+            {loading && <div>Loading...</div>}
+            {!loading && getTips().length === 0 && (
+              <div style={{ color: '#e53935' }}>No tips available. Please complete your profile and risk assessment.</div>
+            )}
+            {!loading && getTips().length > 0 && (
+              <ul>
+                {getTips().map((tip, i) => (
+                  <li key={i}>{tip}</li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        </Container>
+      </motion.div>
     </>
   );
 }

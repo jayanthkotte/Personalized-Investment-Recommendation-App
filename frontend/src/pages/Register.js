@@ -81,97 +81,105 @@ function Register() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, type: "spring" }}
-        style={{ width: '100%', maxWidth: 450 }}
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.7 }}
       >
-        <Card elevation={8} sx={{ borderRadius: 4, p: 4, position: 'relative', overflow: 'visible', background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
-          <Box sx={{ textAlign: 'center', mb: 3 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
-              <PersonAddAlt1Icon sx={{ fontSize: 48, color: 'secondary.main', bgcolor: 'white', borderRadius: '50%', p: 1, boxShadow: 3 }} />
-            </Box>
-            <Typography variant="h4" fontWeight={700} sx={{ background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
-              Create Account
-            </Typography>
-            <Typography variant="subtitle2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-              Join thousands of smart investors
-            </Typography>
-          </Box>
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-          <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField
-              label="Full Name"
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              required
-              fullWidth
-              variant="filled"
-              sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
-              InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
-            />
-            <TextField
-              label="Email"
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              fullWidth
-              variant="filled"
-              sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
-              InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
-            />
-            <TextField
-              label="Password"
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              fullWidth
-              variant="filled"
-              sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
-              InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
-              helperText={password && `Password strength: ${passwordStrength}`}
-            />
-            {password && (
-              <LinearProgress variant="determinate" value={passwordStrengthValue} color={passwordStrengthColor} sx={{ height: 6, borderRadius: 2, mb: 1, bgcolor: 'rgba(255,255,255,0.1)' }} />
-            )}
-            <TextField
-              label="Confirm Password"
-              type="password"
-              value={rePassword}
-              onChange={e => setRePassword(e.target.value)}
-              required
-              fullWidth
-              variant="filled"
-              sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
-              InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
-              error={rePassword && password !== rePassword}
-              helperText={rePassword && password !== rePassword ? 'Passwords do not match' : ''}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              color="secondary"
-              size="large"
-              sx={{ mt: 2, borderRadius: 2, fontWeight: 700, boxShadow: 3 }}
-              disabled={loading}
-              fullWidth
-            >
-              {loading ? <CircularProgress size={24} color="inherit" /> : "Create Account"}
-            </Button>
-          </Box>
-          <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.1)' }}>
-            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)' }}>OR</Typography>
-          </Divider>
-          <Typography align="center" sx={{ color: 'rgba(255,255,255,0.8)' }}>
-            Already have an account?{' '}
-            <Link component={RouterLink} to="/login" color="primary" fontWeight={700} underline="hover">
-              Sign In
-            </Link>
-          </Typography>
-        </Card>
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, type: "spring" }}
+            style={{ width: '100%', maxWidth: 450 }}
+          >
+            <Card elevation={8} sx={{ borderRadius: 4, p: 4, position: 'relative', overflow: 'visible', background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
+              <Box sx={{ textAlign: 'center', mb: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
+                  <PersonAddAlt1Icon sx={{ fontSize: 48, color: 'secondary.main', bgcolor: 'white', borderRadius: '50%', p: 1, boxShadow: 3 }} />
+                </Box>
+                <Typography variant="h4" fontWeight={700} sx={{ background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
+                  Create Account
+                </Typography>
+                <Typography variant="subtitle2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                  Join thousands of smart investors
+                </Typography>
+              </Box>
+              {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+              <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <TextField
+                  label="Full Name"
+                  type="text"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  required
+                  fullWidth
+                  variant="filled"
+                  sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
+                  InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
+                />
+                <TextField
+                  label="Email"
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  fullWidth
+                  variant="filled"
+                  sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
+                  InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
+                />
+                <TextField
+                  label="Password"
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  fullWidth
+                  variant="filled"
+                  sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
+                  InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
+                  helperText={password && `Password strength: ${passwordStrength}`}
+                />
+                {password && (
+                  <LinearProgress variant="determinate" value={passwordStrengthValue} color={passwordStrengthColor} sx={{ height: 6, borderRadius: 2, mb: 1, bgcolor: 'rgba(255,255,255,0.1)' }} />
+                )}
+                <TextField
+                  label="Confirm Password"
+                  type="password"
+                  value={rePassword}
+                  onChange={e => setRePassword(e.target.value)}
+                  required
+                  fullWidth
+                  variant="filled"
+                  sx={{ input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' }, bgcolor: 'rgba(255,255,255,0.05)' }}
+                  InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
+                  error={rePassword && password !== rePassword}
+                  helperText={rePassword && password !== rePassword ? 'Passwords do not match' : ''}
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="secondary"
+                  size="large"
+                  sx={{ mt: 2, borderRadius: 2, fontWeight: 700, boxShadow: 3 }}
+                  disabled={loading}
+                  fullWidth
+                >
+                  {loading ? <CircularProgress size={24} color="inherit" /> : "Create Account"}
+                </Button>
+              </Box>
+              <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.1)' }}>
+                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)' }}>OR</Typography>
+              </Divider>
+              <Typography align="center" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+                Already have an account?{' '}
+                <Link component={RouterLink} to="/login" color="primary" fontWeight={700} underline="hover">
+                  Sign In
+                </Link>
+              </Typography>
+            </Card>
+          </motion.div>
+        </Box>
       </motion.div>
     </Box>
   );

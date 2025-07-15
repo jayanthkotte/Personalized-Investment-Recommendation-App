@@ -357,3 +357,43 @@ frontend/
 If you follow these steps, both the backend and frontend will be running and connected. You can now register, log in, and use all features of the app!
 
 --- 
+
+# Animations in Each Page (framer-motion)
+
+We have added a unique animation to each main page using the framer-motion library. Each animation is implemented by wrapping the main content of the page in a <motion.div> with specific animation props. No two pages use the same animation style.
+
+## Animation Summary Table
+
+| Page           | Animation Type         | Implementation Details |
+|----------------|-----------------------|-----------------------|
+| Dashboard      | Fade In               | <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7 }} > ... </motion.div> |
+| BankUpload     | Scale Up              | <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ duration: 0.7 }} > ... </motion.div> |
+| Investment     | Slide In from Left    | <motion.div initial={{ x: -100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.7 }} > ... </motion.div> |
+| Recommendation | Slide In from Right   | <motion.div initial={{ x: 100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.7 }} > ... </motion.div> |
+| Login          | Slide In from Bottom  | <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.7 }} > ... </motion.div> |
+| Register       | Slide In from Top     | <motion.div initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.7 }} > ... </motion.div> |
+| RiskProfile    | Rotate In             | <motion.div initial={{ rotate: -10, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} transition={{ duration: 0.7 }} > ... </motion.div> |
+| Profile        | Scale Down (Pop In)   | <motion.div initial={{ scale: 1.2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.7 }} > ... </motion.div> |
+| Tips           | Staggered Fade In     | <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, staggerChildren: 0.2 }} > ... </motion.div> |
+| NotFound       | Fade In               | <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7 }} > ... </motion.div> |
+
+## Example: Dashboard Page (Fade In)
+
+```jsx
+import { motion } from "framer-motion";
+...
+<NavBar />
+<motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 0.7 }}
+>
+  {/* Main dashboard content here */}
+</motion.div>
+```
+
+## How to Add/Change Animations
+- Import { motion } from "framer-motion" at the top of the page.
+- Wrap the main content (not NavBar) in a <motion.div>.
+- Set the initial, animate, and transition props to achieve the desired effect.
+- Each page uses a different animation for a unique user experience. 

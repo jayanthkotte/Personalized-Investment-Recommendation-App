@@ -3,6 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import { motion } from "framer-motion";
 
 const RISK_LEVELS = ["Low", "Medium", "High"];
 const GOALS = ["Retirement", "Education", "Emergency", "Family", "Wealth Creation"];
@@ -193,78 +194,84 @@ function Profile() {
   return (
     <>
       <NavBar />
-      <Container>
-        <Card>
-          <h2>Profile</h2>
-          {msg && <div style={{ color: '#388e3c', marginBottom: 8 }}>{msg}</div>}
-          {error && <Error>{error}</Error>}
-          {!editMode ? (
-            <>
-              <div><b>Name:</b> {profile.name}</div>
-              <div><b>Email:</b> {profile.email}</div>
-              <div><b>Risk Level:</b> {profile.risk_level || '-'}</div>
-              <div><b>Investment Goal:</b> {profile.investment_goal || '-'}</div>
-              <div><b>Financial Behavior:</b> {profile.financial_behavior || '-'}</div>
-              <Button onClick={handleEdit}>Edit</Button>
-              <Button style={{ marginLeft: 16, background: '#1976d2' }} onClick={() => setShowPwd(true)}>Change Password</Button>
-            </>
-          ) : (
-            <>
-              <Input name="name" value={editData.name} onChange={handleChange} placeholder="Name" />
-              <Input name="email" value={editData.email} onChange={handleChange} placeholder="Email" />
-              <select name="risk_level" value={editData.risk_level} onChange={handleChange} style={{margin: '8px 0', padding: 10, borderRadius: 4}}>
-                <option value="">Select Risk Level</option>
-                {RISK_LEVELS.map(r => <option key={r} value={r}>{r}</option>)}
-              </select>
-              <select name="investment_goal" value={editData.investment_goal} onChange={handleChange} style={{margin: '8px 0', padding: 10, borderRadius: 4}}>
-                <option value="">Select Investment Goal</option>
-                {GOALS.map(g => <option key={g} value={g}>{g}</option>)}
-              </select>
-              <select name="financial_behavior" value={editData.financial_behavior} onChange={handleChange} style={{margin: '8px 0', padding: 10, borderRadius: 4}}>
-                <option value="">Select Financial Behavior</option>
-                {BEHAVIORS.map(b => <option key={b} value={b}>{b}</option>)}
-              </select>
-              <Button onClick={handleSave}>Save</Button>
-              <Button style={{ marginLeft: 16, background: '#e53935' }} onClick={handleCancel}>Cancel</Button>
-            </>
-          )}
-        </Card>
-        {showPwd && (
+      <motion.div
+        initial={{ scale: 1.2, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.7 }}
+      >
+        <Container>
           <Card>
-            <h3>Change Password</h3>
-            {pwdError && <Error>{pwdError}</Error>}
-            {pwdMsg && <div style={{ color: '#388e3c', marginBottom: 8 }}>{pwdMsg}</div>}
-            <form onSubmit={handlePwdSubmit}>
-              <Input
-                type="password"
-                name="current"
-                value={pwdData.current}
-                onChange={handlePwdChange}
-                placeholder="Current Password"
-                required
-              />
-              <Input
-                type="password"
-                name="next"
-                value={pwdData.next}
-                onChange={handlePwdChange}
-                placeholder="New Password"
-                required
-              />
-              <Input
-                type="password"
-                name="repeat"
-                value={pwdData.repeat}
-                onChange={handlePwdChange}
-                placeholder="Retype New Password"
-                required
-              />
-              <Button type="submit">Change Password</Button>
-              <Button style={{ marginLeft: 16, background: '#e53935' }} type="button" onClick={() => setShowPwd(false)}>Cancel</Button>
-            </form>
+            <h2>Profile</h2>
+            {msg && <div style={{ color: '#388e3c', marginBottom: 8 }}>{msg}</div>}
+            {error && <Error>{error}</Error>}
+            {!editMode ? (
+              <>
+                <div><b>Name:</b> {profile.name}</div>
+                <div><b>Email:</b> {profile.email}</div>
+                <div><b>Risk Level:</b> {profile.risk_level || '-'}</div>
+                <div><b>Investment Goal:</b> {profile.investment_goal || '-'}</div>
+                <div><b>Financial Behavior:</b> {profile.financial_behavior || '-'}</div>
+                <Button onClick={handleEdit}>Edit</Button>
+                <Button style={{ marginLeft: 16, background: '#1976d2' }} onClick={() => setShowPwd(true)}>Change Password</Button>
+              </>
+            ) : (
+              <>
+                <Input name="name" value={editData.name} onChange={handleChange} placeholder="Name" />
+                <Input name="email" value={editData.email} onChange={handleChange} placeholder="Email" />
+                <select name="risk_level" value={editData.risk_level} onChange={handleChange} style={{margin: '8px 0', padding: 10, borderRadius: 4}}>
+                  <option value="">Select Risk Level</option>
+                  {RISK_LEVELS.map(r => <option key={r} value={r}>{r}</option>)}
+                </select>
+                <select name="investment_goal" value={editData.investment_goal} onChange={handleChange} style={{margin: '8px 0', padding: 10, borderRadius: 4}}>
+                  <option value="">Select Investment Goal</option>
+                  {GOALS.map(g => <option key={g} value={g}>{g}</option>)}
+                </select>
+                <select name="financial_behavior" value={editData.financial_behavior} onChange={handleChange} style={{margin: '8px 0', padding: 10, borderRadius: 4}}>
+                  <option value="">Select Financial Behavior</option>
+                  {BEHAVIORS.map(b => <option key={b} value={b}>{b}</option>)}
+                </select>
+                <Button onClick={handleSave}>Save</Button>
+                <Button style={{ marginLeft: 16, background: '#e53935' }} onClick={handleCancel}>Cancel</Button>
+              </>
+            )}
           </Card>
-        )}
-      </Container>
+          {showPwd && (
+            <Card>
+              <h3>Change Password</h3>
+              {pwdError && <Error>{pwdError}</Error>}
+              {pwdMsg && <div style={{ color: '#388e3c', marginBottom: 8 }}>{pwdMsg}</div>}
+              <form onSubmit={handlePwdSubmit}>
+                <Input
+                  type="password"
+                  name="current"
+                  value={pwdData.current}
+                  onChange={handlePwdChange}
+                  placeholder="Current Password"
+                  required
+                />
+                <Input
+                  type="password"
+                  name="next"
+                  value={pwdData.next}
+                  onChange={handlePwdChange}
+                  placeholder="New Password"
+                  required
+                />
+                <Input
+                  type="password"
+                  name="repeat"
+                  value={pwdData.repeat}
+                  onChange={handlePwdChange}
+                  placeholder="Retype New Password"
+                  required
+                />
+                <Button type="submit">Change Password</Button>
+                <Button style={{ marginLeft: 16, background: '#e53935' }} type="button" onClick={() => setShowPwd(false)}>Cancel</Button>
+              </form>
+            </Card>
+          )}
+        </Container>
+      </motion.div>
     </>
   );
 }

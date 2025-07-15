@@ -171,144 +171,150 @@ function Investment() {
   return (
     <>
       <NavBar />
-      <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
-        <Box sx={{ maxWidth: 1000, mx: 'auto', px: 2 }}>
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, type: "spring" }}
-          >
-            <Card elevation={8} sx={{ borderRadius: 4, p: 4, mb: 4, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
-              <Typography variant="h4" fontWeight={700} sx={{ mb: 2, background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                Virtual Investments
-              </Typography>
-              <Typography variant="subtitle1" sx={{ mb: 2, color: 'rgba(255,255,255,0.8)' }}>
-                Virtual Balance: ₹{virtualBalance !== null ? virtualBalance : '...'}
-              </Typography>
-              <Box component="form" onSubmit={handleAdd} autoComplete="off" sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', mb: 2 }}>
-                <Select
-                  value={type}
-                  onChange={e => setType(e.target.value)}
-                  variant="filled"
-                  sx={{ minWidth: 140, bgcolor: 'rgba(255,255,255,0.05)', color: 'white' }}
-                >
-                  <MenuItem value="Stock">Stock</MenuItem>
-                  <MenuItem value="Mutual Fund">Mutual Fund</MenuItem>
-                </Select>
-                {type === "Stock" ? (
-                  <Autocomplete
-                    freeSolo
-                    options={stockSuggestions.map(s => s.name)}
-                    inputValue={stockQuery}
-                    onInputChange={(_, newInputValue) => setStockQuery(newInputValue)}
-                    onChange={(_, newValue) => {
-                      setSelectedCompany(newValue || "");
-                      const found = stockSuggestions.find(s => s.name === newValue);
-                      if (found && found.expected_return !== undefined) setExpectedReturn(String(found.expected_return));
-                    }}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Search Stock" variant="filled" sx={{ bgcolor: 'rgba(255,255,255,0.05)', minWidth: 200, input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }} InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }} />
-                    )}
+      <motion.div
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.7 }}
+      >
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
+          <Box sx={{ maxWidth: 1000, mx: 'auto', px: 2 }}>
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, type: "spring" }}
+            >
+              <Card elevation={8} sx={{ borderRadius: 4, p: 4, mb: 4, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
+                <Typography variant="h4" fontWeight={700} sx={{ mb: 2, background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  Virtual Investments
+                </Typography>
+                <Typography variant="subtitle1" sx={{ mb: 2, color: 'rgba(255,255,255,0.8)' }}>
+                  Virtual Balance: ₹{virtualBalance !== null ? virtualBalance : '...'}
+                </Typography>
+                <Box component="form" onSubmit={handleAdd} autoComplete="off" sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', mb: 2 }}>
+                  <Select
+                    value={type}
+                    onChange={e => setType(e.target.value)}
+                    variant="filled"
+                    sx={{ minWidth: 140, bgcolor: 'rgba(255,255,255,0.05)', color: 'white' }}
+                  >
+                    <MenuItem value="Stock">Stock</MenuItem>
+                    <MenuItem value="Mutual Fund">Mutual Fund</MenuItem>
+                  </Select>
+                  {type === "Stock" ? (
+                    <Autocomplete
+                      freeSolo
+                      options={stockSuggestions.map(s => s.name)}
+                      inputValue={stockQuery}
+                      onInputChange={(_, newInputValue) => setStockQuery(newInputValue)}
+                      onChange={(_, newValue) => {
+                        setSelectedCompany(newValue || "");
+                        const found = stockSuggestions.find(s => s.name === newValue);
+                        if (found && found.expected_return !== undefined) setExpectedReturn(String(found.expected_return));
+                      }}
+                      renderInput={(params) => (
+                        <TextField {...params} label="Search Stock" variant="filled" sx={{ bgcolor: 'rgba(255,255,255,0.05)', minWidth: 200, input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }} InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }} />
+                      )}
+                    />
+                  ) : (
+                    <Autocomplete
+                      freeSolo
+                      options={mfSuggestions.map(f => f.name)}
+                      inputValue={mfQuery}
+                      onInputChange={(_, newInputValue) => setMfQuery(newInputValue)}
+                      onChange={(_, newValue) => {
+                        setSelectedCompany(newValue || "");
+                        const found = mfSuggestions.find(f => f.name === newValue);
+                        if (found && found.expected_return !== undefined) setExpectedReturn(String(found.expected_return));
+                      }}
+                      renderInput={(params) => (
+                        <TextField {...params} label="Search Mutual Fund" variant="filled" sx={{ bgcolor: 'rgba(255,255,255,0.05)', minWidth: 200, input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }} InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }} />
+                      )}
+                    />
+                  )}
+                  <TextField
+                    type="number"
+                    label="Amount"
+                    value={amount}
+                    onChange={e => setAmount(e.target.value)}
+                    variant="filled"
+                    sx={{ minWidth: 120, bgcolor: 'rgba(255,255,255,0.05)', input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }}
+                    InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
                   />
-                ) : (
-                  <Autocomplete
-                    freeSolo
-                    options={mfSuggestions.map(f => f.name)}
-                    inputValue={mfQuery}
-                    onInputChange={(_, newInputValue) => setMfQuery(newInputValue)}
-                    onChange={(_, newValue) => {
-                      setSelectedCompany(newValue || "");
-                      const found = mfSuggestions.find(f => f.name === newValue);
-                      if (found && found.expected_return !== undefined) setExpectedReturn(String(found.expected_return));
-                    }}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Search Mutual Fund" variant="filled" sx={{ bgcolor: 'rgba(255,255,255,0.05)', minWidth: 200, input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }} InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }} />
-                    )}
+                  <TextField
+                    type="text"
+                    label="Expected Return %"
+                    value={expectedReturn}
+                    InputProps={{ readOnly: true }}
+                    onChange={() => {}} // Prevent editing
+                    variant="filled"
+                    sx={{ minWidth: 160, bgcolor: 'rgba(255,255,255,0.05)', input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }}
+                    InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
                   />
-                )}
-                <TextField
-                  type="number"
-                  label="Amount"
-                  value={amount}
-                  onChange={e => setAmount(e.target.value)}
-                  variant="filled"
-                  sx={{ minWidth: 120, bgcolor: 'rgba(255,255,255,0.05)', input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }}
-                  InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
-                />
-                <TextField
-                  type="text"
-                  label="Expected Return %"
-                  value={expectedReturn}
-                  InputProps={{ readOnly: true }}
-                  onChange={() => {}} // Prevent editing
-                  variant="filled"
-                  sx={{ minWidth: 160, bgcolor: 'rgba(255,255,255,0.05)', input: { color: 'white' }, label: { color: 'rgba(255,255,255,0.7)' } }}
-                  InputLabelProps={{ style: { color: 'rgba(255,255,255,0.7)' } }}
-                />
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  startIcon={<AddCircleOutlineIcon />}
-                  sx={{ borderRadius: 2, fontWeight: 700, boxShadow: 3, minWidth: 180 }}
-                  disabled={loading}
-                >
-                  {loading ? <CircularProgress size={22} color="inherit" /> : "Add Investment"}
-                </Button>
-              </Box>
-              {msg && <Alert severity={msg.includes('fail') ? 'error' : msg.includes('added') ? 'success' : 'info'} sx={{ mb: 2 }}>{msg}</Alert>}
-            </Card>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, type: "spring" }}
-          >
-            <Card elevation={6} sx={{ borderRadius: 3, p: 3, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
-              <Typography variant="h5" fontWeight={700} sx={{ mb: 2, color: 'white' }}>
-                Current Investments
-              </Typography>
-              <TableContainer component={Paper} sx={{ background: 'rgba(255,255,255,0.03)', borderRadius: 3 }}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Type</TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Company</TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Amount</TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Expected Return %</TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Date Invested</TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {investments.map(inv => (
-                      <TableRow key={inv._id} hover>
-                        <TableCell sx={{ color: 'white' }}>{inv.type}</TableCell>
-                        <TableCell sx={{ color: 'white' }}>{inv.company || "-"}</TableCell>
-                        <TableCell sx={{ color: 'white' }}>{inv.amount}</TableCell>
-                        <TableCell sx={{ color: 'white' }}>{inv.expected_return !== undefined ? inv.expected_return : "-"}</TableCell>
-                        <TableCell sx={{ color: 'white' }}>{formatDate(inv.date_invested)}</TableCell>
-                        <TableCell>
-                          <Button
-                            onClick={() => handleSell(inv._id)}
-                            variant="contained"
-                            color="secondary"
-                            startIcon={<SellIcon />}
-                            sx={{ borderRadius: 2, fontWeight: 700 }}
-                            disabled={loading}
-                          >
-                            Sell
-                          </Button>
-                        </TableCell>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    startIcon={<AddCircleOutlineIcon />}
+                    sx={{ borderRadius: 2, fontWeight: 700, boxShadow: 3, minWidth: 180 }}
+                    disabled={loading}
+                  >
+                    {loading ? <CircularProgress size={22} color="inherit" /> : "Add Investment"}
+                  </Button>
+                </Box>
+                {msg && <Alert severity={msg.includes('fail') ? 'error' : msg.includes('added') ? 'success' : 'info'} sx={{ mb: 2 }}>{msg}</Alert>}
+              </Card>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, type: "spring" }}
+            >
+              <Card elevation={6} sx={{ borderRadius: 3, p: 3, background: 'linear-gradient(120deg, #232526 0%, #414345 100%)', color: 'white' }}>
+                <Typography variant="h5" fontWeight={700} sx={{ mb: 2, color: 'white' }}>
+                  Current Investments
+                </Typography>
+                <TableContainer component={Paper} sx={{ background: 'rgba(255,255,255,0.03)', borderRadius: 3 }}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Type</TableCell>
+                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Company</TableCell>
+                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Amount</TableCell>
+                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Expected Return %</TableCell>
+                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Date Invested</TableCell>
+                        <TableCell sx={{ color: 'white', fontWeight: 700, background: 'rgba(0,0,0,0.2)' }}>Action</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Card>
-          </motion.div>
+                    </TableHead>
+                    <TableBody>
+                      {investments.map(inv => (
+                        <TableRow key={inv._id} hover>
+                          <TableCell sx={{ color: 'white' }}>{inv.type}</TableCell>
+                          <TableCell sx={{ color: 'white' }}>{inv.company || "-"}</TableCell>
+                          <TableCell sx={{ color: 'white' }}>{inv.amount}</TableCell>
+                          <TableCell sx={{ color: 'white' }}>{inv.expected_return !== undefined ? inv.expected_return : "-"}</TableCell>
+                          <TableCell sx={{ color: 'white' }}>{formatDate(inv.date_invested)}</TableCell>
+                          <TableCell>
+                            <Button
+                              onClick={() => handleSell(inv._id)}
+                              variant="contained"
+                              color="secondary"
+                              startIcon={<SellIcon />}
+                              sx={{ borderRadius: 2, fontWeight: 700 }}
+                              disabled={loading}
+                            >
+                              Sell
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Card>
+            </motion.div>
+          </Box>
         </Box>
-      </Box>
+      </motion.div>
     </>
   );
 }
